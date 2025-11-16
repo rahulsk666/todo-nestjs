@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { ConfigType } from '@nestjs/config';
-import { Pool, PoolClient } from 'pg';
+import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
 import databaseConfig from 'src/config/database.config';
 
 @Injectable()
@@ -15,6 +15,13 @@ export class DatabaseService {
 
   getPool() {
     return this.pool;
+  }
+
+  async runQuery<T extends QueryResultRow = any>(
+    query: string,
+    params?: unknown[],
+  ): Promise<QueryResult<T>> {
+    return this.pool.query<T>(query, params);
   }
 
   async runInTransaction<T>(
